@@ -43,29 +43,34 @@ def submit_feedback(
         feedback=feedback,
     )
     db.add(form_entry)
-    db.commit()
-    db.refresh(form_entry)
+    db.flush()  # get form_entry.id without committing
 
-    saved_files = []
-    for file in files:
-        ext = os.path.splitext(file.filename)[1]
-        unique_name = f"{uuid.uuid4().hex}{ext}"
-        file_path = os.path.join(UPLOAD_DIR, unique_name)
-        with open(file_path, "wb") as f:
-            f.write(file.file.read())
+    written_paths = []
+    try:
+        for file in files:
+            if not file.filename:  # skip empty UploadFile sentinels
+                continue
+            ext = os.path.splitext(file.filename)[1]
+            unique_name = f"{uuid.uuid4().hex}{ext}"
+            file_path = os.path.join(UPLOAD_DIR, unique_name)
+            with open(file_path, "wb") as f:
+                f.write(file.file.read())
+            written_paths.append(file_path)
 
-        upload = FileUpload(
-            customer_feedback_id=form_entry.id,
-            name=file.filename,
-            path=file_path,
-        )
-        db.add(upload)
-        saved_files.append(upload)
+            upload = FileUpload(
+                customer_feedback_id=form_entry.id,
+                name=file.filename,
+                path=file_path,
+            )
+            db.add(upload)
 
-    if saved_files:
         db.commit()
-        for upload in saved_files:
-            db.refresh(upload)
+    except Exception:
+        db.rollback()
+        for path in written_paths:
+            if os.path.exists(path):
+                os.remove(path)
+        raise
 
     db.refresh(form_entry)
     return form_entry
