@@ -1,9 +1,13 @@
+import os
+import shutil
+import tempfile
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database import Base, get_db
 from main import app
+from models import FeedbackCategory
 
 TEST_DATABASE_URL = "sqlite:///./test.db"
 
@@ -23,7 +27,7 @@ def db():
 
 
 @pytest.fixture(scope="function")
-def client(db):
+def client(db, tmp_upload_dir):
     def override_get_db():
         try:
             yield db
@@ -36,7 +40,13 @@ def client(db):
     app.dependency_overrides.clear()
 
 
-from models import FeedbackCategory
+@pytest.fixture(scope="function")
+def tmp_upload_dir(monkeypatch):
+    tmp_dir = tempfile.mkdtemp()
+    monkeypatch.setattr("routers.feedback.UPLOAD_DIR", tmp_dir)
+    yield tmp_dir
+    shutil.rmtree(tmp_dir, ignore_errors=True)
+
 
 @pytest.fixture
 def category(db):
