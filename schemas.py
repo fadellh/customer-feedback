@@ -23,10 +23,10 @@ class FeedbackSubmitResponse(BaseModel):
     id: int
     name: str
     email: str
-    phone_number: Optional[str]
-    feedback_category_id: Optional[int]
+    phone_number: Optional[str] = None
+    feedback_category_id: Optional[int] = None
     rating: int
-    feedback: Optional[str]
+    feedback: Optional[str] = None
     created_at: datetime
     files: List[FileUploadResponse] = []
 
