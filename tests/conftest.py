@@ -27,13 +27,15 @@ def db():
 
 
 @pytest.fixture(scope="function")
-def client(db, tmp_upload_dir):
+def client(db, tmp_upload_dir, monkeypatch):
     def override_get_db():
         try:
             yield db
         finally:
             pass
 
+    # db fixture already creates tables via SQLite; skip the lifespan's create_all
+    monkeypatch.setattr("database.Base.metadata.create_all", lambda bind: None)
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as c:
         yield c

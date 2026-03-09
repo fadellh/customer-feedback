@@ -1,3 +1,6 @@
+import io
+
+
 def test_get_categories_empty(client):
     response = client.get("/categories")
     assert response.status_code == 200
@@ -40,9 +43,6 @@ def test_submit_feedback_invalid_rating(client):
         "rating": "10",
     })
     assert response.status_code == 422
-
-
-import io
 
 
 def test_submit_feedback_with_file(client):
