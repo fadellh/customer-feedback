@@ -34,3 +34,14 @@ def client(db):
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
+
+
+from models import FeedbackCategory
+
+@pytest.fixture
+def category(db):
+    cat = FeedbackCategory(name="Product")
+    db.add(cat)
+    db.commit()
+    db.refresh(cat)
+    return cat
