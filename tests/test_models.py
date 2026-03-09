@@ -28,6 +28,10 @@ def test_customer_feedback_form_model(db):
     assert form.name == "Alice"
     assert form.deleted_at is None
 
+    db.refresh(form)
+    assert form.category is not None
+    assert form.category.id == category.id
+
 
 def test_file_upload_model(db):
     form = CustomerFeedbackForm(name="Bob", email="bob@example.com", rating=4)
@@ -44,3 +48,7 @@ def test_file_upload_model(db):
     db.refresh(upload)
     assert upload.id is not None
     assert upload.name == "receipt.pdf"
+
+    db.refresh(upload)
+    assert upload.feedback_form is not None
+    assert upload.feedback_form.id == form.id

@@ -34,7 +34,7 @@ class CustomerFeedbackForm(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     category = relationship("FeedbackCategory", back_populates="feedbacks")
-    files = relationship("FileUpload", back_populates="feedback_form")
+    files = relationship("FileUpload", back_populates="feedback_form", cascade="all, delete-orphan")
 
 
 class FileUpload(Base):
