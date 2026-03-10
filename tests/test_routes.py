@@ -1,3 +1,6 @@
+import io
+
+
 def test_get_categories_empty(client):
     response = client.get("/categories")
     assert response.status_code == 200
@@ -40,3 +43,16 @@ def test_submit_feedback_invalid_rating(client):
         "rating": "10",
     })
     assert response.status_code == 422
+
+
+def test_submit_feedback_with_file(client):
+    fake_file = io.BytesIO(b"fake file content")
+    response = client.post(
+        "/feedback",
+        data={"name": "Dana", "email": "dana@example.com", "rating": "4"},
+        files={"files": ("report.txt", fake_file, "text/plain")},
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert len(data["files"]) == 1
+    assert data["files"][0]["name"] == "report.txt"
