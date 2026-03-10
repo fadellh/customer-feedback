@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add models.py tests/test_models.py)",
+      "Bash(git commit -m \"fix: add cascade delete-orphan and relationship traversal tests\")",
+      "Bash(pytest tests/test_models.py -v)",
+      "Bash(pytest tests/test_schemas.py -v)",
+      "Bash(pytest -v)",
+      "Bash(python -c \"import pydantic; print\\(pydantic.__version__\\)\")",
+      "Bash(git add schemas.py)",
+      "Bash(git commit -m \"fix: add None defaults to Optional schema fields\")",
+      "Bash(pytest tests/test_routes.py -v)",
+      "Bash(pytest tests/test_routes.py::test_submit_feedback_success -v)",
+      "Bash(pytest tests/ -v)",
+      "Bash(pytest tests/test_routes.py::test_submit_feedback_with_file -v)",
+      "Bash(git add tests/test_routes.py)",
+      "Bash(git commit -m \"test: add file upload test for POST /feedback\")",
+      "Bash(git add main.py)",
+      "Bash(git commit -m \"feat: add CORS middleware and finalize app wiring\")",
+      "Bash(python -c \"import database\")",
+      "Bash(git add main.py database.py tests/conftest.py tests/test_routes.py)",
+      "Bash(git commit -m \"fix: startup table creation via lifespan, clear error on missing DATABASE_URL, fix import order in tests\")"
+    ],
+    "additionalDirectories": [
+      "/Users/fadellukmanhakim/fadel/customer-feedback/docs"
+    ]
+  }
+}
